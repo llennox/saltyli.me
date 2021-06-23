@@ -23,4 +23,8 @@ export function renderNavBar(route) {
     `;
     const loginLink = document.getElementById("navigateToLogin");
     loginLink.onclick = () => window.location.replace('#login');
-}
+};
+
+export function testFunction() {
+  console.log("WORKS");
+};

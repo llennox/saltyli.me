@@ -1,4 +1,4 @@
-export function renderLogin(route) {
+export function renderLogin(appState) {
     const content = document.querySelector('content');
     content.innerHTML = `
         <div class="text-center">
@@ -45,8 +45,27 @@ export function renderLogin(route) {
 
     const loginSubmit = document.getElementById("loginButton");
     loginSubmit.onclick = () => { 
-        const input = getLoginValues();
+        const loginValues = getLoginValues();
         setLoading(true);
+        fetch("https://api.saltyli.me/api/auth/login", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": {"username_or_email": loginValues.email, "password": loginValues.password}
+        })
+        .then(response => {
+            appState.setCore('token', 'set jwt here')
+            if ( loginValues.isChecked ) {
+                document.cookie = "jwt=; Secure";
+            }
+            //redirect too
+            console.log(response);
+        })
+        .catch(err => {
+                console.error(err);
+        }).finally( () => setLoading(false) )
+        // if remember me is true set token and cookie else set token in appState only
      };
 
 }
