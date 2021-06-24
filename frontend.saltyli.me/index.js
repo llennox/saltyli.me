@@ -4,9 +4,12 @@ import { renderLogin } from './login.js';
 import AppState from './app-state.js';
 
 window.addEventListener('load', () => {
-    //registerSW();
     let appState = new AppState();
-    // if cookie exists setCore in appState here
+    let _jwt = getCookie('token');
+    // if user has cookie saved
+    if (_jwt) {
+      appState.setCore('token', _jwt)
+    };
     const navBar = document.createElement('nav-bar');
     const content = document.createElement('content');
     const main = document.querySelector('main');
@@ -18,22 +21,29 @@ window.addEventListener('load', () => {
     });
 });
 
+function getCookie(name) {
+  function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+  var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+  return match ? match[1] : null;
+}
+
 function render(hashUrl, appState) {
     let url = hashUrl.replace('#', '');
     const urlList = url.split('/');
     console.log(appState.getCore());
-    console.log(document.cookie);
+    console.log(getCookie('token'));
+
     switch (urlList[0]) {
         case 'login':
-            renderNavBar(urlList[0]);
+            renderNavBar(urlList[0], appState);
             renderLogin(appState);
             break;
         case 'register':
-            renderNavBar(urlList[0]);
+            renderNavBar(urlList[0], appState);
             renderLogin();
             break;
         default:
-            renderNavBar(urlList[0]);
+            renderNavBar(urlList[0], appState);
             renderHome(appState);
             break;
     }

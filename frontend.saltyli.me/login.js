@@ -41,31 +41,48 @@ export function renderLogin(appState) {
             loginSubmit.outerHTML = `<button class="w-100 btn btn-lg btn-primary" id="loginButton" type="submit">Sign in</button>`
         }
     };
-
-
+    
     const loginSubmit = document.getElementById("loginButton");
-    loginSubmit.onclick = () => { 
+    loginSubmit.addEventListener('click', sendLogin);
+
+    function sendLogin() {
         const loginValues = getLoginValues();
         setLoading(true);
         fetch("https://api.saltyli.me/api/auth/login", {
-        "method": "POST",
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": {"username_or_email": loginValues.email, "password": loginValues.password}
-        })
+            "headers": {
+              "accept": "*/*",
+              "accept-language": "en-US,en;q=0.9",
+              "content-type": "application/json",
+              "sec-fetch-dest": "empty",
+              "sec-fetch-mode": "cors",
+              "sec-fetch-site": "cross-site",
+              "sec-gpc": "1"
+            },
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "body": `{\"username_or_email\":\"${loginValues.email}\",\"password\":\"${loginValues.password}\"}`,
+            "method": "POST",
+            "mode": "cors",
+            "credentials": "omit"
+          })
         .then(response => {
-            appState.setCore('token', 'set jwt here')
-            if ( loginValues.isChecked ) {
-                document.cookie = "jwt=; Secure";
-            }
-            //redirect too
-            console.log(response);
+            if (response.status === 200) {
+                response.json().then( (_json) => {
+                    appState.setCore('token', _json.data.token)
+                    if ( loginValues.isChecked ) {
+                        document.cookie = `token=${_json.data.token}; Secure`;
+                    };
+                    window.location.replace('#')
+                });
+            };
         })
         .catch(err => {
-                console.error(err);
-        }).finally( () => setLoading(false) )
-        // if remember me is true set token and cookie else set token in appState only
-     };
+            console.log(err);
+        }).finally( () => {
+            setLoading(false);
+            const loginSubmit = document.getElementById("loginButton");
+            loginSubmit.addEventListener('click', sendLogin);
+        });
+    };
+
 
 }

@@ -18,6 +18,7 @@ export default class AppState {
   getCore() {
     return this._core;
   }
+
   setCore(prop, value) {
     this._core[prop] = value;
   }

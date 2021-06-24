@@ -1,6 +1,6 @@
-export function renderNavBar(route) {
+export function renderNavBar(route, appState) {
     const navBar = document.querySelector('nav-bar');
-
+    const loggedIn = appState.getCore()?.token ? true : false;
     navBar.innerHTML = `
       <div class="container">
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom background-blur">
@@ -16,15 +16,22 @@ export function renderNavBar(route) {
           </ul>
 
           <div class="col-md-3 text-end">
-            <button type="button" id="navigateToLogin" class="btn btn-primary me-2">Login</button>
+            ${loggedIn ? '<button type="button" id="logOut" class="btn btn-primary me-2">Logout</button>'
+             : '<button type="button" id="navigateToLogin" class="btn btn-primary me-2">Login</button>' }
           </div>
         </header>
       </div>
     `;
-    const loginLink = document.getElementById("navigateToLogin");
-    loginLink.onclick = () => window.location.replace('#login');
-};
+    if (loggedIn) {
+      const logOut = document.getElementById("logOut");
+      logOut.onclick = () => {
+        appState.setCore('token', false)
+        document.cookie = "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+        window.location.replace('#');
+      };
+    } else {
+      const loginLink = document.getElementById("navigateToLogin");
+      loginLink.onclick = () => window.location.replace('#login');
 
-export function testFunction() {
-  console.log("WORKS");
+    };
 };
