@@ -12,7 +12,7 @@ A simple CRUD backend app using Actix-web, Diesel and JWT for an iot environment
 - Rename `secret.key.sample` to `secret.key` or create your own key by running `head -c16 /dev/urandom > secret.key` in command line (Linux/UNIX only) and copy to `/src` folder
 - Create a database in postgres cli or [pgAdmin](https://www.pgadmin.org/) tool
 - Rename `.env.sample` to `.env` and update the database connection string in `DATABASE_URL` key.
-- Create a file named `secret.key` in the src/ directory i.e. `tr -dc 'A-Za-z0-9`{|}~' </dev/urandom | head -c 100  ; echo`
+- Create a file named `secret.key` in the src/ directory i.e. `tr -dc 'A-Za-z0-9{|}~' </dev/urandom | head -c 100  ; echo`
 - run the database migrations and generate the schema
 - `diesel migration run && diesel print-schema > src/schema.rs`
 - Build with release profile: `cargo build --release`
