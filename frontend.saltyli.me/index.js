@@ -1,4 +1,5 @@
 import { renderNavBar } from './nav-bar.js';
+import { renderUserHome } from './user-home.js'
 import { renderHome } from './home.js';
 import { renderLogin } from './login.js';
 import AppState from './app-state.js';
@@ -44,7 +45,7 @@ function render(hashUrl, appState) {
             break;
         default:
             renderNavBar(urlList[0], appState);
-            renderHome(appState);
+            appState.getCore()?.token ? renderUserHome(appState) : renderHome(appState);
             break;
     }
 }
