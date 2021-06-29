@@ -45,7 +45,7 @@ function render(hashUrl, appState) {
             break;
         default:
             renderNavBar(urlList[0], appState);
-            appState.getCore()?.token ? renderUserHome(appState) : renderHome(appState);
+            appState.getCore()?.token ? renderUserHome(urlList, appState) : renderHome(appState);
             break;
     }
 }
