@@ -53,25 +53,25 @@ function render(hashUrl, appState) {
     } else {
       console.log("User logged in")
       document.querySelector('nav-bar').innerHTML = ''; 
-      switch (urlList[0]) {
+      switch (appState.getCore()?.path) {
           case 'graphs':
-              renderSideBar(urlList, appState);
+              renderSideBar(appState);
               //renderGraphs(appState);
               break;
           case 'outlet-control':
-              renderSideBar(urlList, appState);
+              renderSideBar(appState);
               //renderOutletControl();
               break;
           case 'conditions':
-              renderSideBar(urlList, appState);
+              renderSideBar(appState);
               //renderOutletControl();
               break;
           case 'profile':
-              renderSideBar(urlList, appState);
+              renderSideBar(appState);
               //renderOutletControl();
               break;
           default:
-              renderSideBar(urlList, appState);
+              renderSideBar(appState);
               //renderUserHome(urlList, appState);
               break;
       }

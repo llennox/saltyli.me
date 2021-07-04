@@ -1,4 +1,4 @@
-export function renderSideBar(urlList, appState) {
+export function renderSideBar(appState) {
     const content = document.querySelector('content');
     content.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -46,34 +46,35 @@ export function renderSideBar(urlList, appState) {
         <hr>
           <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-              <button type="button" id="graphsButton" data-bs-dismiss="offcanvas" class="nav-link active" aria-current="page">
+              <button type="button" id="graphsButton" class="nav-link link-dark active" aria-current="page">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#graphs"/></svg>
                 Graphs
               </button>
             </li>
             <li>
-              <button type="button" id="outletControlButton" data-bs-dismiss="offcanvas" class="nav-link link-dark">
+              <button type="button" id="outletControlButton" class="nav-link link-dark">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#outlet"/></svg>
                 Outlet Control 
               </button>
             </li>
             <li>
-              <a href="#" class="nav-link link-dark">
+              <button type="button" id="conditionsButton" class="nav-link link-dark">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#conditions"/></svg>
                 Conditions
-              </a>
+              </button>
             </li>
             <li>
-              <a href="#" class="nav-link link-dark">
+              <button type="button" id="profileButton" class="nav-link link-dark">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
                 Profile
-              </a>
+              </button>
             </li>
           </ul>
           <hr>
       </div>
       <div class="d-flex flex-row">
-        <button type="button" id="collapseButton" data-bs-toggle="offcanvas" data-bs-target="#offCanvasExample" aria-controls="offCanvasExample" class="btn me-2">
+        <button type="button" id="collapseButton" data-bs-toggle="offcanvas" 
+          data-bs-target="#offCanvasExample" aria-controls="offCanvasExample" class="btn me-2">
          <svg class="bi me-2 arrows" width="40" height="32"><use xlink:href="#menu"/></svg>
         </button>
         <h1> main content </h1>
@@ -81,12 +82,26 @@ export function renderSideBar(urlList, appState) {
     </div>
     </main>
     `;
-    const graphsLink = document.getElementById("graphsButton");
-    graphsLink.addEventListener('click', function() {navigate('#graphs')});
-}
+    const navLinks = document.querySelectorAll('.nav-link')
+    navLinks.forEach(element => {
+        if (appState.getCore()?.isMobile) {
+          element.setAttribute("data-bs-dismiss", "offcanvas")
+        }
+        element.addEventListener('click', function(e) {navigate(e, appState) });
+    });
+};
 
-function navigate(route) {
-  console.log(route);
-  window.location.replace('#graphs')
+function navigate(e, appState) {
+  const el = e.target || e.srcElement;
+  const buttonId = el.id;
 
-}
+  const navLinks = document.querySelectorAll('.nav-link')
+  navLinks.forEach(element => {
+      if (element.id !== el.id) {
+        element.classList.remove('active');
+      }
+  });
+  const newPath = buttonId.replace("Button", "");
+  el.classList.add('active')
+  appState.setCore('path', newPath);
+};
