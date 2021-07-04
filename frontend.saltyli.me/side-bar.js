@@ -2,6 +2,15 @@ export function renderSideBar(urlList, appState) {
     const content = document.querySelector('content');
     content.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol id="arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+      </symbol>
+      <symbol id="menu" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </symbol>
+      <symbol id="arrow-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+      </symbol>
       <symbol id="people-circle" viewBox="0 0 16 16">
         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
         <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
@@ -19,25 +28,34 @@ export function renderSideBar(urlList, appState) {
     </svg>
 
     <main>
-      <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px; height: 100vh;">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+    <div class="d-flex flex-row">
+      <div class="d-flex flex-column flex-shrink-0 p-3 bg-light offcanvas offcanvas-start" 
+        id="offCanvasExample" aria-labelledby="offCanvasExampleLabel" tabindex="-1" data-bs-scroll="true" data-bs-backdrop="false" style="width: 280px; height: 100vh;">
+       <div class="d-flex flex-row offcanvas-header">
+        <a href="/" class="mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
           <img class="bi me-2" src="/static/img/lime1.svg" alt="" width="40" height="32">
-          <span class="fs-4">Salty Lime</span>
+          <span class="fs-4">Saltyli.me</span>
         </a>
+        <button type="button" id="collapseButton" data-bs-dismiss="offcanvas" 
+          data-bs-target="#offCanvasExample" aria-controls="offCanvasExample" class="btn me-2">
+         <svg class="bi me-2 arrows" width="40" height="32"><use xlink:href="#arrow-left"/></svg>
+        </button>
+       </div>
+
+          
         <hr>
           <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-              <a href="#" class="nav-link active" aria-current="page">
+              <button type="button" id="graphsButton" data-bs-dismiss="offcanvas" class="nav-link active" aria-current="page">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#graphs"/></svg>
                 Graphs
-              </a>
+              </button>
             </li>
             <li>
-              <a href="#" class="nav-link link-dark">
+              <button type="button" id="outletControlButton" data-bs-dismiss="offcanvas" class="nav-link link-dark">
                 <svg class="bi me-2" width="16" height="16"><use xlink:href="#outlet"/></svg>
                 Outlet Control 
-              </a>
+              </button>
             </li>
             <li>
               <a href="#" class="nav-link link-dark">
@@ -52,9 +70,23 @@ export function renderSideBar(urlList, appState) {
               </a>
             </li>
           </ul>
-        
           <hr>
       </div>
+      <div class="d-flex flex-row">
+        <button type="button" id="collapseButton" data-bs-toggle="offcanvas" data-bs-target="#offCanvasExample" aria-controls="offCanvasExample" class="btn me-2">
+         <svg class="bi me-2 arrows" width="40" height="32"><use xlink:href="#menu"/></svg>
+        </button>
+        <h1> main content </h1>
+      </div>
+    </div>
     </main>
     `;
+    const graphsLink = document.getElementById("graphsButton");
+    graphsLink.addEventListener('click', function() {navigate('#graphs')});
+}
+
+function navigate(route) {
+  console.log(route);
+  window.location.replace('#graphs')
+
 }

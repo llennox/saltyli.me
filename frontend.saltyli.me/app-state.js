@@ -12,7 +12,7 @@ export default class AppState {
   }
 
   constructor() {
-    this._core = {};
+    this._core = { path: '' };
     window.Controller = this; //for debugging purposes
   }
   getCore() {
