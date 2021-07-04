@@ -1,4 +1,5 @@
 import './static/bootstrap/js/bootstrap.bundle.min.js';
+import './static/d3.min.js';
 export function renderUserHome(urlList, appState) {
     const content = document.querySelector('content');
     content.innerHTML = `
@@ -46,7 +47,7 @@ export function renderUserHome(urlList, appState) {
       </ul>
     </div>
     <div class="d-flex flex-column p-4">
-      <div id="firstGraph"> main content </div>
+      <div id="firstGraph"></div>
       <h1> main content2 </h1>
     </div>
   </div>
@@ -57,57 +58,73 @@ export function renderUserHome(urlList, appState) {
     const tooltip = new bootstrap.Tooltip(tooltipTriggerEl);
     tooltipTriggerEl.addEventListener('click', () => tooltip.hide());
   });
-
-// Plotly code
-  Plotly.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv", function(err, rows){
-
-  function unpack(rows, key) {
-  return rows.map(function(row) { return row[key]; });
+  renderRangeSlider();
 }
 
+function renderRangeSlider() {
+  var rawDataURL = 'https://raw.githubusercontent.com/plotly/datasets/master/2016-weather-data-seattle.csv';
+  var xField = 'Date';
+  var yField = 'Mean_TemperatureC';
 
-var trace1 = {
-  type: "scatter",
-  mode: "lines",
-  name: 'AAPL High',
-  x: unpack(rows, 'Date'),
-  y: unpack(rows, 'AAPL.High'),
-  line: {color: '#17BECF'}
-}
-
-var data = [trace1];
-
-var layout = {
-  title: 'Time Series with Rangeslider',
-  xaxis: {
-    autorange: true,
-    range: ['2015-02-17', '2017-02-16'],
-    rangeselector: {buttons: [
-        {
+  var selectorOptions = {
+      buttons: [{
+          step: 'month',
+          stepmode: 'backward',
           count: 1,
-          label: '1m',
+          label: '1m'
+      }, {
           step: 'month',
-          stepmode: 'backward'
-        },
-        {
+          stepmode: 'backward',
           count: 6,
-          label: '6m',
-          step: 'month',
-          stepmode: 'backward'
-        },
-        {step: 'all'}
-      ]},
-    rangeslider: {range: ['2015-02-17', '2017-02-16']},
-    type: 'date'
-  },
-  yaxis: {
-    autorange: true,
-    range: [86.8700008333, 138.870004167],
-    type: 'linear'
+          label: '6m'
+      }, {
+          step: 'year',
+          stepmode: 'todate',
+          count: 1,
+          label: 'YTD'
+      }, {
+          step: 'year',
+          stepmode: 'backward',
+          count: 1,
+          label: '1y'
+      }, {
+          step: 'all',
+      }],
+  };
+
+  d3.csv(rawDataURL).then( (rawData) => {
+      var data = prepData(rawData);
+      var layout = {
+          title: 'Time series with range slider and selectors',
+          xaxis: {
+              rangeselector: selectorOptions,
+              rangeslider: {}
+          },
+          yaxis: {
+              fixedrange: true
+          }
+      };
+      Plotly.newPlot('firstGraph', data, layout);
+    })
+      //if (err) console.log(err);
+      //if(err) throw err;
+
+
+
+  function prepData(rawData) {
+      var x = [];
+      var y = [];
+
+      rawData.forEach(function(datum, i) {
+
+          x.push(new Date(datum[xField]));
+          y.push(datum[yField]);
+      });
+
+      return [{
+          mode: 'lines',
+          x: x,
+          y: y
+      }];
   }
-};
-
-Plotly.newPlot('firstGraph', data, layout);
-})
-
 }

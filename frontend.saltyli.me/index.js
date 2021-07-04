@@ -1,5 +1,6 @@
 import { renderNavBar } from './nav-bar.js';
 import { renderUserHome } from './user-home.js'
+import { renderSideBar } from './side-bar.js';
 import { renderHome } from './home.js';
 import { renderLogin } from './login.js';
 import AppState from './app-state.js';
@@ -34,19 +35,47 @@ function render(hashUrl, appState) {
     console.log(appState.getCore());
     console.log(getCookie('token'));
 
-    switch (urlList[0]) {
-        case 'login':
-            renderNavBar(urlList[0], appState);
-            renderLogin(appState);
-            break;
-        case 'register':
-            renderNavBar(urlList[0], appState);
-            renderLogin();
-            break;
-        default:
-            renderNavBar(urlList[0], appState);
-            appState.getCore()?.token ? renderUserHome(urlList, appState) : renderHome(appState);
-            break;
+    if (!appState.getCore()?.token) {
+      switch (urlList[0]) {
+          case 'login':
+              renderNavBar(urlList[0], appState);
+              renderLogin(appState);
+              break;
+          case 'register':
+              renderNavBar(urlList[0], appState);
+              renderLogin();
+              break;
+          default:
+              renderNavBar(urlList[0], appState);
+              renderHome(appState);
+              break;
+      }
+    } else {
+      console.log("User logged in")
+      document.querySelector('nav-bar').innerHTML = ''; 
+      switch (urlList[0]) {
+          case 'graphs':
+              renderSideBar(urlList, appState);
+              //renderGraphs(appState);
+              break;
+          case 'outlet-control':
+              renderSideBar(urlList, appState);
+              //renderOutletControl();
+              break;
+          case 'conditions':
+              renderSideBar(urlList, appState);
+              //renderOutletControl();
+              break;
+          case 'profile':
+              renderSideBar(urlList, appState);
+              //renderOutletControl();
+              break;
+          default:
+              renderSideBar(urlList, appState);
+              //renderUserHome(urlList, appState);
+              break;
+      }
+
     }
 }
 
