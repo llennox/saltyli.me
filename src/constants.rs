@@ -29,7 +29,7 @@ pub const USER_ID: &str = "user_id";
 pub const EMPTY: &str = "";
 
 // ignore routes
-pub const IGNORE_ROUTES: [&str; 7] = [ "/", "/api/ws" ,"/api/sensor/log/read", "/api/sensor/log/write","/api/ping", "/api/auth/signup", "/api/auth/login"];
+pub const IGNORE_ROUTES: [&str; 4] = [ "/api/ws", "/api/ping","/api/auth/signup", "/api/auth/login"];
 // admin routes
 pub const ADMIN_ROUTES: &str = "/api/admin";
 
