@@ -1,6 +1,8 @@
+import { renderUserContent } from './user-content.js';
+
 export function renderSideBar(appState) {
-    const content = document.querySelector('content');
-    content.innerHTML = `
+    const navBar = document.querySelector('nav-bar');
+    navBar.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol id="arrow-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
@@ -27,8 +29,6 @@ export function renderSideBar(appState) {
       </symbol>
     </svg>
 
-    <main>
-    <div class="d-flex flex-row">
       <div class="d-flex flex-column flex-shrink-0 p-3 bg-light offcanvas offcanvas-start" 
         id="offCanvasExample" aria-labelledby="offCanvasExampleLabel" tabindex="-1" data-bs-scroll="true" data-bs-backdrop="false" style="width: 280px; height: 100vh;">
        <div class="d-flex flex-row offcanvas-header">
@@ -72,15 +72,14 @@ export function renderSideBar(appState) {
           </ul>
           <hr>
       </div>
-      <div class="d-flex flex-row">
-        <button type="button" id="collapseButton" data-bs-toggle="offcanvas" 
-          data-bs-target="#offCanvasExample" aria-controls="offCanvasExample" class="btn me-2">
-         <svg class="bi me-2 arrows" width="40" height="32"><use xlink:href="#menu"/></svg>
-        </button>
-        <h1> main content </h1>
-      </div>
+      <div class="d-flex p-2 bd-highlight">
+        <div class="flex-fill">
+          <button type="button" id="collapseButton" data-bs-toggle="offcanvas" 
+            data-bs-target="#offCanvasExample" aria-controls="offCanvasExample" class="btn me-2">
+          <svg class="bi me-2 arrows" width="40" height="32"><use xlink:href="#menu"/></svg>
+          </button>
+        </div>
     </div>
-    </main>
     `;
     const navLinks = document.querySelectorAll('.nav-link')
     navLinks.forEach(element => {
@@ -89,6 +88,7 @@ export function renderSideBar(appState) {
         }
         element.addEventListener('click', function(e) {navigate(e, appState) });
     });
+    renderUserContent(appState);
 };
 
 function navigate(e, appState) {
@@ -102,6 +102,7 @@ function navigate(e, appState) {
       }
   });
   const newPath = buttonId.replace("Button", "");
-  el.classList.add('active')
+  el.classList.add('active');
   appState.setCore('path', newPath);
+  renderUserContent(appState);
 };

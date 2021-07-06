@@ -80,16 +80,17 @@ where
 
             //}
             if !authenticate_pass {
+                eprintln!("WTF");
                 if let Some(pool) = req.app_data::<Data<Pool>>() {
-                    info!("Connecting to database...");
+                    eprintln!("Connecting to database...");
                     if let Some(authen_header) = req.headers().get(constants::AUTHORIZATION) {
-                        info!("Parsing authorization header...");
+                        eprintln!("Parsing authorization header...");
                         if let Ok(authen_str) = authen_header.to_str() {
                             if authen_str.starts_with("bearer") || authen_str.starts_with("Bearer") {
-                                info!("Parsing token...");
+                                eprintln!("Parsing token...");
                                 let token = authen_str[6..authen_str.len()].trim();
                                 if let Ok(token_data) = token_utils::decode_token(token.to_string()) {
-                                    info!("Decoding token...");
+                                    eprintln!("Decoding token...");
                                     if let Ok(verified_user_id) = token_utils::verify_token(&token_data, pool) {
                                         if req.path().starts_with(constants::ADMIN_ROUTES) {
                                             let user = User::find_user_by_id(&verified_user_id, &pool.get().unwrap()).unwrap();
@@ -103,6 +104,7 @@ where
                                         } else {
                                             req.headers_mut().insert(HeaderName::from_static(constants::USER_ID), 
                                                 HeaderValue::from_str(&verified_user_id.to_string()).unwrap());
+                                            eprintln!("{:?}" ,req.headers());
                                             authenticate_pass = true;
                                         }
                                             
