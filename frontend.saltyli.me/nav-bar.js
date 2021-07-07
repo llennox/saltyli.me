@@ -27,11 +27,11 @@ export function renderNavBar(route, appState) {
       logOut.onclick = () => {
         appState.setCore('token', false)
         document.cookie = "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-        window.location.replace('#');
+        window.location.assign('#');
       };
     } else {
       const loginLink = document.getElementById("navigateToLogin");
-      loginLink.onclick = () => window.location.replace('#login');
+      loginLink.onclick = () => window.location.assign('#login');
 
     };
 };

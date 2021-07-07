@@ -1,14 +1,4 @@
-let _instance = null;
-
 export default class AppState {
-
-  static getInstance() {
-    if (_instance) {
-      return _instance;
-    } else {
-      return new AppState();
-    }
-  }
 
   constructor() {
     window.mobileCheck = function() {
@@ -27,6 +17,10 @@ export default class AppState {
 
   setCore(prop, value) {
     this._core[prop] = value;
+  }
+
+  setInitial() {
+    this._core = { }
   }
 }
   

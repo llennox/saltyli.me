@@ -67,7 +67,7 @@ export function renderLogin(appState) {
                     if ( loginValues.isChecked ) {
                         document.cookie = `token=${_json.data.token}; Secure`;
                     };
-                    window.location.replace('#')
+                    window.location.assign('#')
                 });
             };
         })
