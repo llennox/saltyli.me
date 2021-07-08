@@ -11,10 +11,8 @@ use crate::{
 };
 use diesel::prelude::*;
 
-
-
 //WIP
-#[derive(Identifiable, Queryable, Serialize)]
+#[derive(Identifiable, Queryable, Serialize, Clone)]
 #[table_name = "sensor_types"]
 pub struct SensorTypes {
     pub id: i32,

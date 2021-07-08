@@ -56,6 +56,10 @@ pub fn config_services(cfg: &mut web::ServiceConfig) {
                         web::resource("/log/read")
                             .route(web::post().to(sensor_controller::read_from_log))
                     )
+                    .service(
+                        web::resource("/log/read-v2")
+                            .route(web::post().to(sensor_controller::read_from_log_v2))
+                    )
                 )
             .service(
                 web::scope("/hardware")

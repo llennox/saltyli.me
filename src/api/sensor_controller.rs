@@ -3,9 +3,9 @@ use crate::{
     constants,
     schema::hardware::{dsl::*},
     models::{
-        hardware::{ Hardware },
+        hardware::{ Hardware, SafeHardwareOutput },
         user::{ User },
-        sensor::{ Sensors, SensorsInput },
+        sensor::{ Sensors, SensorsInput, SensorsOutput },
         response::ResponseBody,
         sensor_type::{ SensorTypes },
         sensor_log::{ SensorLogs, MultiSensorLogsDTO, SensorRangeInput },
@@ -68,11 +68,77 @@ fn get_time_range(start: Option<NaiveDateTime>, end: Option<NaiveDateTime>) -> (
     return (start_date, end_date);
 }
 
+fn get_sensor_info(selected_sensor_id: i32, hardware_sensors_for_group: &Vec<(SensorsOutput, SafeHardwareOutput)>, sensor_types: &Vec<SensorTypes>) -> SensorTypes {
+    let selected_sensor = hardware_sensors_for_group.iter().find( |&s| s.0.sensor_id == selected_sensor_id ).expect("Selected sensor not found");
+    let sensor_type_info = sensor_types.iter().find( |&st| st.id == selected_sensor.0.sensor_type_id ).expect("Sensor type info not found");
+    let sensor_type_info = sensor_type_info.clone();
+    let sensor_info = SensorTypes {
+        id: selected_sensor_id,
+        name: sensor_type_info.name,
+        units: sensor_type_info.units 
+    };
+    return sensor_info;
+}
+
+fn first<T>(v: &Vec<T>) -> Option<&T> {
+    v.first()
+}
+
+#[derive(Serialize)]
+pub struct SensorLogRecord {
+    pub units: String,
+    pub name: String,
+    pub sensor_id: i32,
+    pub x: Vec<NaiveDateTime>,
+    pub y: Vec<f64>,
+}
+
+//// POST api/sensor/log/read-v2
+pub async fn read_from_log_v2(req: HttpRequest, sensor_range_input: web::Json<SensorRangeInput>, pool: web::Data<Pool>) -> Result<HttpResponse> {
+    let session_header = req.headers().get(constants::USER_ID).unwrap();
+    let user_id = session_header.to_str().unwrap();
+    let user = User::find_user_by_id(&user_id.parse::<i32>().unwrap(), &pool.get().unwrap()).expect("user not found");
+    let sensor_types = SensorTypes::get_sensor_types(&pool.get().unwrap()).expect("Problem getting sensor types");
+    let hardware_sensors_for_group = Hardware::get_hardware_sensors_for_group(
+        user.group_id, &pool.get().unwrap()).expect("Problem getting hardware sensors for group");
+
+    let mut available_sensor_ids: Vec<i32> = Vec::new();
+    for hardware_sensors in &hardware_sensors_for_group {
+        available_sensor_ids.push( hardware_sensors.0.sensor_id );
+    }
+    let filtered_sensor_ids = intersect_requested_sensor_ids(sensor_range_input.sensor_ids.as_ref(), available_sensor_ids);
+    let (start_date, end_date) = get_time_range(sensor_range_input.start, sensor_range_input.end);
+
+    let sensor_records = SensorLogs::get_sensor_log_entries(
+        filtered_sensor_ids, start_date, end_date, &pool.get().unwrap()).expect("Problem getting sensor records");
+    
+    let mut plotly_formed_json_records: Vec<SensorLogRecord> = Vec::new();
+    for records in sensor_records {
+        let first_record = first(&records).expect("Problem getting first record");
+        let sensor_info = get_sensor_info(first_record.sensor_id, &hardware_sensors_for_group, &sensor_types);
+        let mut x: Vec<NaiveDateTime> = Vec::new();
+        let mut y: Vec<f64> = Vec::new();
+        for record in records {
+            x.push(record.timestamp);
+            y.push(record.value);
+        }
+        let sensor_record_to_push = SensorLogRecord {
+          x: x,
+          y: y,
+          units: sensor_info.units,
+          sensor_id: sensor_info.id,
+          name: sensor_info.name
+        };
+        plotly_formed_json_records.push( sensor_record_to_push );
+    }
+    Ok(HttpResponse::Ok().json(ResponseBody::new(constants::SENSOR_LOG_READ_SUCCESS, plotly_formed_json_records)))
+} 
+
 //// POST api/sensor/log/read
 pub async fn read_from_log(req: HttpRequest, sensor_range_input: web::Json<SensorRangeInput>, pool: web::Data<Pool>) -> Result<HttpResponse> {
     let session_header = req.headers().get(constants::USER_ID).unwrap();
     let user_id = session_header.to_str().unwrap();
-    let user = User::find_user_by_id(&user_id.parse::<i32>().unwrap(), &pool.get().unwrap()).unwrap();
+    let user = User::find_user_by_id(&user_id.parse::<i32>().unwrap(), &pool.get().unwrap()).expect("User not found");
     if let Ok(hardware_sensors_for_group) = Hardware::get_hardware_sensors_for_group(user.group_id, &pool.get().unwrap()) {
         let mut available_sensor_ids: Vec<i32> = Vec::new();
         for hardware_sensors in hardware_sensors_for_group {

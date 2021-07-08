@@ -66,7 +66,6 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWebSocket {
                     let json_msg: Value = v.unwrap();
                     match serde_json::from_value(json_msg).expect("bad json") {
                         WebsocketMessageType::Auth { key, hardware_id } => {
-                            eprintln!("{}", key );
                             if let Ok(hardware_to_verify) = hardware 
                                 .filter(id.eq(hardware_id))
                                 .get_result::<Hardware>(&self.pool.get().unwrap())

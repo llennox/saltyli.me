@@ -103,7 +103,6 @@ where
                                         } else {
                                             req.headers_mut().insert(HeaderName::from_static(constants::USER_ID), 
                                                 HeaderValue::from_str(&verified_user_id.to_string()).unwrap());
-                                            eprintln!("{:?}" ,req.headers());
                                             authenticate_pass = true;
                                         }
                                             
