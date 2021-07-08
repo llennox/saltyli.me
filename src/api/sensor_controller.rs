@@ -80,9 +80,9 @@ fn get_sensor_info(selected_sensor_id: i32, hardware_sensors_for_group: &Vec<(Se
     return sensor_info;
 }
 
-fn first<T>(v: &Vec<T>) -> Option<&T> {
-    v.first()
-}
+//fn first<T>(v: &Vec<T>) -> Option<&T> {
+    //v.first()
+//}
 
 #[derive(Serialize)]
 pub struct SensorLogRecord {
@@ -114,7 +114,7 @@ pub async fn read_from_log_v2(req: HttpRequest, sensor_range_input: web::Json<Se
     
     let mut plotly_formed_json_records: Vec<SensorLogRecord> = Vec::new();
     for records in sensor_records {
-        let first_record = first(&records).expect("Problem getting first record");
+        let first_record = records.first().expect("Problem getting first record");
         let sensor_info = get_sensor_info(first_record.sensor_id, &hardware_sensors_for_group, &sensor_types);
         let mut x: Vec<NaiveDateTime> = Vec::new();
         let mut y: Vec<f64> = Vec::new();
