@@ -114,22 +114,26 @@ pub async fn read_from_log_v2(req: HttpRequest, sensor_range_input: web::Json<Se
     
     let mut plotly_formed_json_records: Vec<SensorLogRecord> = Vec::new();
     for records in sensor_records {
-        let first_record = records.first().expect("Problem getting first record");
-        let sensor_info = get_sensor_info(first_record.sensor_id, &hardware_sensors_for_group, &sensor_types);
-        let mut x: Vec<NaiveDateTime> = Vec::new();
-        let mut y: Vec<f64> = Vec::new();
-        for record in records {
-            x.push(record.timestamp);
-            y.push(record.value);
+        if records.len() > 0 {
+            let first_record = records.first().expect("Problem getting first record");
+            let sensor_info = get_sensor_info(first_record.sensor_id, &hardware_sensors_for_group, &sensor_types);
+            let mut x: Vec<NaiveDateTime> = Vec::new();
+            let mut y: Vec<f64> = Vec::new();
+            for record in records {
+                x.push(record.timestamp);
+                y.push(record.value);
+            }
+            let sensor_record_to_push = SensorLogRecord {
+            x: x,
+            y: y,
+            units: sensor_info.units,
+            sensor_id: sensor_info.id,
+            name: sensor_info.name
+            };
+            plotly_formed_json_records.push( sensor_record_to_push );
+        } else {
+            info!("Empty sensor record");
         }
-        let sensor_record_to_push = SensorLogRecord {
-          x: x,
-          y: y,
-          units: sensor_info.units,
-          sensor_id: sensor_info.id,
-          name: sensor_info.name
-        };
-        plotly_formed_json_records.push( sensor_record_to_push );
     }
     Ok(HttpResponse::Ok().json(ResponseBody::new(constants::SENSOR_LOG_READ_SUCCESS, plotly_formed_json_records)))
 } 
