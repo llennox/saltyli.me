@@ -57,8 +57,8 @@ impl Hardware {
                 numbers: true,
                 lowercase_letters: true,
                 uppercase_letters: true,
-                symbols: true,
-                spaces: true,
+                symbols: false,
+                spaces: false,
                 exclude_similar_characters: false,
                 strict: true,
             };
