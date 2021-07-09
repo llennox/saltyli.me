@@ -18,6 +18,7 @@ pub struct SensorTypes {
     pub id: i32,
     pub name: String,
     pub units: String,
+    pub label: String,
 }
 
 #[derive(Insertable, Serialize, Deserialize, Queryable)]

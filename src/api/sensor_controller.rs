@@ -75,7 +75,8 @@ fn get_sensor_info(selected_sensor_id: i32, hardware_sensors_for_group: &Vec<(Se
     let sensor_info = SensorTypes {
         id: selected_sensor_id,
         name: sensor_type_info.name,
-        units: sensor_type_info.units 
+        units: sensor_type_info.units, 
+        label: sensor_type_info.label,
     };
     return sensor_info;
 }
@@ -87,6 +88,7 @@ fn get_sensor_info(selected_sensor_id: i32, hardware_sensors_for_group: &Vec<(Se
 #[derive(Serialize)]
 pub struct SensorLogRecord {
     pub units: String,
+    pub label: String,
     pub name: String,
     pub sensor_id: i32,
     pub x: Vec<NaiveDateTime>,
@@ -127,6 +129,7 @@ pub async fn read_from_log_v2(req: HttpRequest, sensor_range_input: web::Json<Se
             x: x,
             y: y,
             units: sensor_info.units,
+            label: sensor_info.label,
             sensor_id: sensor_info.id,
             name: sensor_info.name
             };
