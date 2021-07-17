@@ -23,6 +23,7 @@ const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
 const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
 
 pub async fn ws_index(r: HttpRequest, stream: web::Payload, pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
+    info!("HI");
     let res = ws::start(MyWebSocket::new(pool), &r, stream);
     res
 }

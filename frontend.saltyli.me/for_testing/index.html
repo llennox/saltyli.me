@@ -14,7 +14,8 @@
       }
       function connect() {
         disconnect();
-        var wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://')+'localhost:8000/api' + '/ws';
+        //var wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://')+'localhost:8000/api' + '/ws';
+        var wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://')+'api.saltyli.me/api' + '/ws';
         console.log(wsUri);
         conn = new WebSocket(wsUri);
         log('Connecting...');

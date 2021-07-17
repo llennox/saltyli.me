@@ -1,4 +1,5 @@
 import { renderUserContent } from './user-content.js';
+import { makeid } from './utilities/utils.js';
 
 export function renderSideBar(appState) {
     const navBar = document.querySelector('nav-bar');
@@ -86,12 +87,17 @@ export function renderSideBar(appState) {
         if (appState.getCore()?.isMobile) {
           element.setAttribute("data-bs-dismiss", "offcanvas")
         }
-        element.addEventListener('click', function(e) {navigate(e, appState) });
+        element.addEventListener('auxclick', function(e) {navigateState(e, appState) });
+        element.addEventListener('click', function(e) {navigateState(e, appState) });
     });
     renderUserContent(appState);
 };
 
-function navigate(e, appState) {
+function navigateState(e, appState) {
+  if (e.button === 1) { //middle click
+    window.open(window.location.href, makeid(10));
+    return
+  }
   const el = e.target || e.srcElement;
   const buttonId = el.id;
 

@@ -1,3 +1,5 @@
+import { navigate } from './utilities/utils.js';
+
 export function renderNavBar(route, appState) {
     const navBar = document.querySelector('nav-bar');
     const loggedIn = appState.getCore()?.token ? true : false;
@@ -16,22 +18,16 @@ export function renderNavBar(route, appState) {
           </ul>
 
           <div class="col-md-3 text-end">
-            ${loggedIn ? '<button type="button" id="logOut" class="btn btn-primary me-2">Logout</button>'
-             : '<button type="button" id="navigateToLogin" class="btn btn-primary me-2">Login</button>' }
+             <button type="button" id="navigateToLogin" class="btn btn-primary me-2">Login</button>
           </div>
         </header>
       </div>
     `;
-    if (loggedIn) {
-      const logOut = document.getElementById("logOut");
-      logOut.onclick = () => {
-        appState.setCore('token', false)
-        document.cookie = "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-        window.location.assign('#');
-      };
-    } else {
       const loginLink = document.getElementById("navigateToLogin");
-      loginLink.onclick = () => window.location.assign('#login');
-
-    };
+      loginLink.onauxclick = (e) => {
+        navigate('#login', e);
+      };
+      loginLink.onclick = (e) => {
+        navigate('#login', e);
+      };
 };
